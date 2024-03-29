@@ -11,6 +11,24 @@ const controls = new OrbitControls(camera, renderer.domElement);
 camera.position.set(0,30,20);
 renderer.setSize(window.innerWidth, window.innerHeight);  
 document.body.appendChild(renderer.domElement);
+//creating box as object for the ground
+const boxGeo = new THREE.BoxGeometry(2,2,2);
+const boxMat = new THREE.MeshBasicMaterial({
+    color:'red',
+    wireframe:true,
+});
+
+const boxMesh = new THREE.Mesh(boxGeo,boxMat);
+scene.add(boxMesh);
+
+// create a Sphere for another object
+const sphereGeo = new THREE.SphereGeometry(3);
+const sphereMat = new THREE.MeshBasicMaterial({
+    color: 'green',
+    wireframe:true,
+});
+const sphereMesh = new THREE.Mesh(sphereGeo,sphereMat);
+scene.add(sphereMesh)
 //create Ground
 const groundGeo = new THREE.PlaneGeometry(30,30);
 const groundMat = new THREE.MeshBasicMaterial({
@@ -35,6 +53,23 @@ const groundBody = new CANNON.Body({
 
 world.addBody(groundBody);
 groundBody.quaternion.setFromEuler(-Math.PI/2, 0,0)
+
+// create a body for box mesh using cannon
+const boxBody = new CANNON.Body({
+    mass:1,
+    shape: new CANNON.Box(new CANNON.Vec3(2,2,2)),
+    position: new CANNON.Vec3(1,20,0)
+})
+
+const sphereBody = new CANNON.Body({
+    mass:10,
+    shape: new CANNON.Sphere(3),
+    position: new CANNON.Vec3(0,15,0)
+})
+
+// add body to cannon world
+world.addBody(boxBody);
+world.addBody(sphereBody);
 const timeStep = 1/60;
 
 function animate() {
@@ -42,7 +77,11 @@ function animate() {
     requestAnimationFrame(animate);
     groundMesh.position.copy(groundBody.position)
     groundMesh.quaternion.copy(groundBody.quaternion)
-
+    // merge with mesh of the body
+    boxMesh.position.copy(boxBody.position);
+    boxMesh.quaternion.copy(boxBody.quaternion);
+    sphereMesh.position.copy(sphereBody.position);
+    sphereMesh.quaternion.copy(sphereBody.quaternion);
 
     controls.update();
     renderer.render(scene, camera);
