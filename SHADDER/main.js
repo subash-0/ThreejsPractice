@@ -1,6 +1,6 @@
 import * as  THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
-
+import subas from "./src/img/subash.jpg";
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
@@ -11,13 +11,14 @@ const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
 
 
-const orbit = new OrbitControls(camera, renderer.domElement);
+// const orbit = new OrbitControls(camera, renderer.domElement);
 const uniforms={
 		
 	u_time :{type:'f', value:0.0},
 	u_resolution:{type:'v2', value: new THREE.Vector2(window.innerWidth, window.innerHeight)
 															.multiplyScalar(window.devicePixelRatio)},
-	u_mouse:{type:'v2', value: new THREE.Vector2(0.0,0.0)}
+	u_mouse:{type:'v2', value: new THREE.Vector2(0.0,0.0)},
+	image:{type:'t', value: new THREE.TextureLoader().load(subas)}
 
 }
 window.addEventListener("mousemove",(e)=>{
@@ -39,7 +40,7 @@ const material = new THREE.ShaderMaterial( {
 const plane = new THREE.Mesh(geometry, material);
 scene.add(plane);
 camera.position.set(-1, -1, 20);
-orbit.update();
+// orbit.update();
 
 const clock = new THREE.Clock();
 
