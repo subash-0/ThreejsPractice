@@ -14,7 +14,9 @@ const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerH
 const orbit = new OrbitControls(camera, renderer.domElement);
 const uniforms={
 		
-	u_time :{type:'f', value:0.0}
+	u_time :{type:'f', value:0.0},
+	u_resolution:{type:'v2', value: new THREE.Vector2(window.innerWidth, window.innerHeight)
+															.multiplyScalar(window.devicePixelRatio)}
 
 }
 
@@ -24,13 +26,13 @@ const material = new THREE.ShaderMaterial( {
 	uniforms:uniforms,
 	vertexShader: document.getElementById( 'vertexShader' ).textContent,
 	fragmentShader: document.getElementById( 'fragmentShader' ).textContent,
-
-	wireframe:true
+	wireframe:false,
+	
 
 } );
 const plane = new THREE.Mesh(geometry, material);
 scene.add(plane);
-camera.position.set(6, 8, 14);
+camera.position.set(-1, -1, 20);
 orbit.update();
 
 const clock = new THREE.Clock();
