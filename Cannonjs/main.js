@@ -11,6 +11,7 @@ const controls = new OrbitControls(camera, renderer.domElement);
 camera.position.set(0,0,20);
 renderer.setSize(window.innerWidth, window.innerHeight);  
 document.body.appendChild(renderer.domElement);
+//create Ground
 
 const world = new CANNON.World({
     gravity: new CANNON.Vec3(0,-9.81,0),
