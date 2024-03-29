@@ -31,8 +31,8 @@
       void main(){
         vec2 st = gl_FragCoord.xy / u_resolution;
         vec4 texture = texture2D(image,st);
-       float effect = abs(sine(texture.x + u_time))
-        gl_FragColor = vec4(texture.r, texture.g, texture.b, 1.0);
+        float effect = abs(sin(texture.x + u_time));
+        gl_FragColor = vec4(vec3(effect), 1.0);
       }
     </script>
     
