@@ -12,7 +12,14 @@ camera.position.set(0,0,20);
 renderer.setSize(window.innerWidth, window.innerHeight);  
 document.body.appendChild(renderer.domElement);
 //create Ground
-
+const groundGeo = new THREE.PlaneGeometry(30,30);
+const groundMat = new THREE.MeshBasicMaterial({
+    color:0xffffff,
+    side:THREE.DoubleSide,
+    wireframe:true,
+});
+const groundMesh = new THREE.Mesh(groundGeo,groundMat);
+scene.add(groundMesh);
 const world = new CANNON.World({
     gravity: new CANNON.Vec3(0,-9.81,0),
 
