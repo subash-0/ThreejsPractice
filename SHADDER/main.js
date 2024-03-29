@@ -10,17 +10,21 @@ renderer.setClearColor(0xffffff);
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
 
-const uniforms = {
-	u_time :{type:'f', value:0.0}
-}
 
 const orbit = new OrbitControls(camera, renderer.domElement);
+const uniforms={
+		
+	u_time :{type:'f', value:0.0}
+
+}
+
+
 const geometry = new THREE.PlaneGeometry(10, 10, 30, 30);
 const material = new THREE.ShaderMaterial( {
-
+	uniforms:uniforms,
 	vertexShader: document.getElementById( 'vertexShader' ).textContent,
 	fragmentShader: document.getElementById( 'fragmentShader' ).textContent,
-	uniforms,
+
 	wireframe:true
 
 } );
