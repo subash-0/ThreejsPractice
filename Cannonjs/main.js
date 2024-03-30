@@ -61,7 +61,7 @@ const boxPhysMat = new CANNON.Material();
 const boxBody = new CANNON.Body({
     mass:1,
     shape: new CANNON.Box(new CANNON.Vec3(2,2,2)),
-    position: new CANNON.Vec3(3,20,0),
+    position: new CANNON.Vec3(2.9,20,0),
     material:boxPhysMat,
 })
 
@@ -79,11 +79,23 @@ const contactGround = new CANNON.ContactMaterial(
 boxBody.angularVelocity.set(0,5,0);
 boxBody.angularDamping = 0.05;
 
+
+const spherePhyMat = new CANNON.Material();
 const sphereBody = new CANNON.Body({
     mass:10,
     shape: new CANNON.Sphere(3),
-    position: new CANNON.Vec3(3,15,0.1)
-})
+    position: new CANNON.Vec3(3,15,0.1),
+    material:spherePhyMat,
+});
+
+const groundSphereConatc = new CANNON.ContactMaterial(
+    grounPhyMat,
+    spherePhyMat,
+    {
+        restitution:0.8,
+    }
+);
+world.addContactMaterial(groundSphereConatc)
 sphereBody.linearDamping = 0.09;
 
 // add body to cannon world
