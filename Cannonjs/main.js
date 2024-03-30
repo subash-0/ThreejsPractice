@@ -8,7 +8,7 @@ const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 const controls = new OrbitControls(camera, renderer.domElement);
 
-camera.position.set(0,30,20);
+camera.position.set(0,40,10);
 renderer.setSize(window.innerWidth, window.innerHeight);  
 document.body.appendChild(renderer.domElement);
 //creating box as object for the ground
@@ -34,7 +34,7 @@ const groundGeo = new THREE.PlaneGeometry(30,30);
 const groundMat = new THREE.MeshBasicMaterial({
     color:0xffffff,
     side:THREE.DoubleSide,
-    wireframe:true,
+    // wireframe:true,
 });
 const groundMesh = new THREE.Mesh(groundGeo,groundMat);
 scene.add(groundMesh);
@@ -46,7 +46,8 @@ const world = new CANNON.World({
 });
 
 const groundBody = new CANNON.Body({
-    shape: new CANNON.Plane(),
+    // shape: new CANNON.Plane(),
+    shape: new CANNON.Box(new CANNON.Vec3(15,15,0.1)),
     type: CANNON.Body.STATIC,
     // mass:0,
 })
@@ -58,14 +59,18 @@ groundBody.quaternion.setFromEuler(-Math.PI/2, 0,0)
 const boxBody = new CANNON.Body({
     mass:1,
     shape: new CANNON.Box(new CANNON.Vec3(2,2,2)),
-    position: new CANNON.Vec3(1,20,0)
+    position: new CANNON.Vec3(-8,20,0)
 })
+
+boxBody.angularVelocity.set(0,10,0);
+boxBody.angularDamping = -0.05;
 
 const sphereBody = new CANNON.Body({
     mass:10,
     shape: new CANNON.Sphere(3),
-    position: new CANNON.Vec3(0,15,0)
+    position: new CANNON.Vec3(3,15,0.1)
 })
+sphereBody.linearDamping = 0.09;
 
 // add body to cannon world
 world.addBody(boxBody);
