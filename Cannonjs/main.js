@@ -8,7 +8,7 @@ const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 const controls = new OrbitControls(camera, renderer.domElement);
 
-camera.position.set(0,40,10);
+camera.position.set(0,30,20);
 renderer.setSize(window.innerWidth, window.innerHeight);  
 document.body.appendChild(renderer.domElement);
 //creating box as object for the ground
@@ -44,11 +44,12 @@ const world = new CANNON.World({
     gravity: new CANNON.Vec3(0,-9.81,0),
 
 });
-
+const grounPhyMat = new CANNON.Material();
 const groundBody = new CANNON.Body({
     // shape: new CANNON.Plane(),
     shape: new CANNON.Box(new CANNON.Vec3(15,15,0.1)),
     type: CANNON.Body.STATIC,
+    material: grounPhyMat,
     // mass:0,
 })
 
@@ -56,14 +57,27 @@ world.addBody(groundBody);
 groundBody.quaternion.setFromEuler(-Math.PI/2, 0,0)
 
 // create a body for box mesh using cannon
+const boxPhysMat = new CANNON.Material();
 const boxBody = new CANNON.Body({
     mass:1,
     shape: new CANNON.Box(new CANNON.Vec3(2,2,2)),
-    position: new CANNON.Vec3(-8,20,0)
+    position: new CANNON.Vec3(3,20,0),
+    material:boxPhysMat,
 })
 
-boxBody.angularVelocity.set(0,10,0);
-boxBody.angularDamping = -0.05;
+//contact between material and ground
+const contactGround = new CANNON.ContactMaterial(
+    grounPhyMat,
+    boxPhysMat,
+    {
+    friction:0.04,
+    }
+    )
+
+    world.addContactMaterial(contactGround)
+
+boxBody.angularVelocity.set(0,5,0);
+boxBody.angularDamping = 0.05;
 
 const sphereBody = new CANNON.Body({
     mass:10,
