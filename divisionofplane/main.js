@@ -101,7 +101,7 @@ window.addEventListener('mousedown',(e)=>{
   intersects.forEach(function(intersect){
     if(intersect.object.name==='ground'){
       console.log(highlightSquare.position)
-      if((Math.abs(highlightSquare.position.x+0.5)%2)===0 && (Math.abs(highlightSquare.position.z+0.5)%2)===0){
+      if((Math.abs(highlightSquare.position.z+0.5)%2)===0 && (Math.abs(highlightSquare.position.x+0.5)%2)===0){
 
         const sphereClone = sphereMesh.clone();
         sphereClone.position.copy(highlightSquare.position)
