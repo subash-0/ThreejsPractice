@@ -2,10 +2,10 @@ import * as THREE from 'three';
 import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
 import * as  CANNON from 'cannon-es';
 
-const renderer = new THREE.WebGLRenderer();
+const renderer = new THREE.WebGLRenderer({antialias:true});
 
 renderer.setSize(window.innerWidth, window.innerHeight);
-
+renderer.shadowMap.enabled = true;
 document.body.appendChild(renderer.domElement);
 
 const scene = new THREE.Scene();
@@ -17,13 +17,15 @@ const camera = new THREE.PerspectiveCamera(
 );
 
 const orbit = new OrbitControls(camera,renderer.domElement);
-camera.position.set(0,10,10);
+camera.position.set(0,10,5);
 
 orbit.update();
 
 const ambidientLight = new THREE.DirectionalLight(0xFFFFFF,5);
 scene.add(ambidientLight);
-ambidientLight.position.set(0,50,0);
+ambidientLight.position.set(-30,50,0);
+ambidientLight.castShadow = true;
+ambidientLight.shadow.mapSize.set(1024,1024)
 // const helper = new THREE.AxesHelper(20);
 // scene.add(helper);
 
@@ -37,9 +39,10 @@ const planePhysMat = new CANNON.Material();
 const planeGeo = new THREE.PlaneGeometry(10,10);
 const planeMat = new THREE.MeshStandardMaterial({
   color:0xffffff,
-  side: THREE.DoubleSide,
+  side:  THREE.DoubleSide,
 });
 const planeMesh = new THREE.Mesh(planeGeo,planeMat);
+planeMesh.receiveShadow = true;
 scene.add(planeMesh);
 
 const planeBody = new CANNON.Body({
@@ -68,11 +71,14 @@ const spherePhysMat = new CANNON.Material()
 window.addEventListener('click',(e)=>{
   const sphereGeo = new THREE.SphereGeometry(0.125,30,30);
   const sphereMat = new THREE.MeshStandardMaterial({
-    color: 'yellow',
+    color: Math.random() * 0xfffffff,
     metalness:0,
     roughness:0,
   })
+
   const sphereMesh = new THREE.Mesh(sphereGeo,sphereMat);
+  sphereMesh.castShadow = true;
+  sphereMesh.receiveShadow = true;
   scene.add(sphereMesh);
   // sphereMesh.position.copy(instersectionPoint);
   const sphereBody = new CANNON.Body({
