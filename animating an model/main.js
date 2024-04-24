@@ -24,16 +24,25 @@ scene.add(directionLight)
 const gridHelper = new THREE.GridHelper(20,20);
 scene.add(gridHelper)
 const Loader = new GLTFLoader();
-
+let mixer;
 Loader.load(Cow.href,(gltf)=>{
     const model = gltf.scene;
     scene.add(model)
+     mixer = new THREE.AnimationMixer(model)
+     const clips = gltf.animations;
+     const clip =  THREE.AnimationClip.findByName(clips,"Walk");
+     const action = mixer.clipAction(clip);
+     action.play();
+     
+     console.log(clips)
 
 })
 
-
+const clock = new THREE.Clock();
 function animate(){
     requestAnimationFrame(animate)
+    if(mixer)
+        mixer.update(clock.getDelta());
     renderer.render(scene,camera)
 }
 
