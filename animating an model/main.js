@@ -30,9 +30,13 @@ Loader.load(Cow.href,(gltf)=>{
     scene.add(model)
      mixer = new THREE.AnimationMixer(model)
      const clips = gltf.animations;
-     const clip =  THREE.AnimationClip.findByName(clips,"Walk");
-     const action = mixer.clipAction(clip);
-     action.play();
+    //  const clip =  THREE.AnimationClip.findByName(clips,"Walk");
+    //  const action = mixer.clipAction(clip);
+    //  action.play();
+    clips.forEach((e)=>{
+        const action = mixer.clipAction(e);
+        action.play();
+    })
      
      console.log(clips)
 
