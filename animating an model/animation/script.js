@@ -2,6 +2,8 @@ import * as THREE from "three"
 import { OrbitControls } from "three/examples/jsm/Addons.js";
 import * as SkeletonUtils from "three/examples/jsm/utils/SkeletonUtils.js";
 const Cow = new URL('../assest/Cow.gltf', import.meta.url);
+const Grass = new URL('../assest/Grass_Large_Extruded.gltf', import.meta.url);
+
 const renderer = new THREE.WebGLRenderer();
 import { GLTFLoader } from "three/examples/jsm/Addons.js";
 renderer.setSize(window.innerWidth, window.innerHeight);
@@ -19,8 +21,8 @@ const scene = new THREE.Scene();
 const orbit = new OrbitControls(camera, renderer.domElement)
 orbit.update()
 
-const ambidientLight= new THREE.AmbientLight(0xffffff, 1);
-const directionLight = new THREE.DirectionalLight(0xffffff,2);
+const ambidientLight= new THREE.AmbientLight(0xffffff, 10);
+const directionLight = new THREE.DirectionalLight(0xffffff,20);
 scene.add(ambidientLight)
 scene.add(directionLight)
 const gridHelper = new THREE.GridHelper(20,20);
@@ -78,26 +80,34 @@ window.addEventListener('mousemove',(e)=>{
 
 
 const Loader = new GLTFLoader();
-// let mixer;
+
 let modelObjs;
+let clips;
 Loader.load(Cow.href,(gltf)=>{
     const model = gltf.scene;
     // scene.add(model)
   
-    model.scale.set(0.1,0.1,0.1);
+    model.scale.set(0.3,0.3,0.1);
     modelObjs = model;
-    //  mixer = new THREE.AnimationMixer(model)
-    //  const clips = gltf.animations;
-    //  const clip =  THREE.AnimationClip.findByName(clips,"Walk");
-    //  const action = mixer.clipAction(clip);
-    //  action.play();
-
-    clips.forEach((e)=>{
-        const action = mixer.clipAction(e);
-        action.play();
-    })
      
+     clips = gltf.animations;
+    
+    console.log(clips)
+    // clips.forEach((e)=>{
+    //     const action = mixer.clipAction(e);
+    //     action.play();
+    // })
+ 
+}, undefined, (error)=>{
+    console.log(error)
+})
 
+Loader.load(Grass.href,(gltf)=>{
+    const model = gltf.scene;
+    scene.add(model)
+ 
+}, undefined, (error)=>{
+    console.log(error)
 })
 
 // const sphereMesh = new THREE.Mesh(
@@ -109,6 +119,7 @@ Loader.load(Cow.href,(gltf)=>{
 //   )
 
   const objects = [];
+  const mixers = [];
   window.addEventListener('mousedown',(e)=>{
     const objectExist = objects.find(function(object){
       return (object.position.x === indicatorSquare.position.x) && (object.position.z === indicatorSquare.position.z);
@@ -117,12 +128,23 @@ Loader.load(Cow.href,(gltf)=>{
     intersects.forEach(function(intersect){
       if(intersect.object.name==='ground'){
         console.log(indicatorSquare.position)
-       
+            console.log(indicatorSquare.position.x)
           const modelClone = SkeletonUtils.clone(modelObjs);
           modelClone.position.copy(indicatorSquare.position)
           scene.add(modelClone);
           objects.push(modelClone);
-            indicatorSquare.material.color.setHex(0xFF0000);
+          let clip;
+          const  mixer = new THREE.AnimationMixer(modelClone);
+          if(Math.abs((indicatorSquare.position.x+0.5)%2)===0){
+            clip =  THREE.AnimationClip.findByName(clips,"Walk");    
+          }else {
+                clip =  THREE.AnimationClip.findByName(clips,"Gallop");
+                }
+          const action = mixer.clipAction(clip);
+          action.play();
+          mixers.push(mixer);
+
+         indicatorSquare.material.color.setHex(0xFF0000);
       }
     })
   }
@@ -132,8 +154,11 @@ const clock = new THREE.Clock();
 function animate(time){
     requestAnimationFrame(animate)
     indicatorSquare.material.opacity = 1+ Math.sin(time/200)
-    // if(mixer)
-        // mixer.update(clock.getDelta());
+    let delta =clock.getDelta();
+   mixers.forEach((mixer)=>{
+    mixer.update(delta);
+   })
+       
     renderer.render(scene,camera)
 }
 
